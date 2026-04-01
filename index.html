@@ -11,6 +11,8 @@
         label { display: block; text-align: left; margin: 10px 0 5px 10px; color: #8b949e; font-size: 13px; }
         select, input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 15px; border: 1px solid #334155; background: #0d1117; color: white; font-size: 16px; box-sizing: border-box; outline: none; }
         .price-display { font-size: 24px; color: #ffcc00; font-weight: bold; margin: 15px 0; padding-top: 10px; border-top: 1px solid #334155; }
+        .currency-info { font-size: 14px; color: #8b949e; margin-bottom: 20px; line-height: 1.6; }
+        .instruction { font-size: 12px; color: #ffcc00; margin-top: 15px; padding: 10px; border: 1px dashed #ffcc00; border-radius: 10px; }
         .btn-order { background: #ffcc00; color: #0d1117; padding: 18px; width: 100%; border-radius: 18px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
         #payment-methods { display: none; margin-top: 25px; text-align: left; animation: fadeIn 0.4s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -18,7 +20,6 @@
         .pay-title { font-size: 14px; color: #9ca3af; margin-bottom: 10px; font-weight: bold; }
         .bank-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 10px; }
         .bank-btn { background: #2d3748; border-radius: 12px; padding: 12px; text-align: center; font-size: 13px; color: white; text-decoration: none; border: 1px solid #4a5568; transition: 0.2s; display: block; }
-        .bank-btn:active { background: #4a5568; }
         .crypto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     </style>
 </head>
@@ -40,9 +41,16 @@
             <input type="number" id="days" value="1" min="1" oninput="updatePrice()">
 
             <div class="price-display">К оплате: <span id="total">0.02</span> USDT</div>
-            <p style="font-size: 14px; color: #8b949e; margin-bottom: 20px;">(~ <span id="total-uah">1</span> грн)</p>
+            <div class="currency-info">
+                (~ <span id="total-uah">1</span> грн) <br>
+                (~ <span id="total-rub">2</span> руб)
+            </div>
 
             <button class="btn-order" onclick="processOrder()">ОФОРМИТЬ ЗАКАЗ</button>
+            
+            <div class="instruction">
+                ⚠️ После оформления заказа <b>обязательно вернитесь в бот</b> — там появятся реквизиты и кнопка оплаты.
+            </div>
         </div>
 
         <div id="payment-methods">
@@ -66,26 +74,40 @@
                 </div>
             </div>
             
+            <div class="instruction" style="margin-bottom: 15px;">
+                ✅ Если вы уже в боте, просто отправьте сообщение с заказом.
+            </div>
+            
             <button class="btn-order" style="background: #374151; color: white;" onclick="location.reload()">Назад</button>
         </div>
     </div>
 
     <script>
-        const exchangeRate = 40;
+        const rateUAH = 40; // Примерный курс USDT к ГРН
+        const rateRUB = 95; // Примерный курс USDT к РУБ
+
         function updatePrice() {
             const price = parseFloat(document.getElementById('channel').value);
             const days = parseInt(document.getElementById('days').value) || 0;
             const total = (price * days).toFixed(2);
             document.getElementById('total').innerText = total;
-            document.getElementById('total-uah').innerText = Math.round(total * exchangeRate);
+            document.getElementById('total-uah').innerText = Math.round(total * rateUAH);
+            document.getElementById('total-rub').innerText = Math.round(total * rateRUB);
         }
+
         function processOrder() {
             const channelName = document.getElementById('channel').selectedOptions[0].text;
             const days = document.getElementById('days').value;
             const total = document.getElementById('total').innerText;
             const totalUah = document.getElementById('total-uah').innerText;
-            const message = `ЗАКАЗ РЕКЛАМЫ:%0A📍 ${channelName}%0A📅 Срок: ${days} дн.%0A💰 Сумма: ${total} USDT (${totalUah} грн)`;
+            const totalRub = document.getElementById('total-rub').innerText;
+            
+            const message = `ЗАКАЗ РЕКЛАМЫ:%0A📍 ${channelName}%0A📅 Срок: ${days} дн.%0A💰 Сумма: ${total} USDT / ${totalUah} грн / ${totalRub} руб`;
+            
+            // Открываем бота
             window.open(`https://t.me/tokenpist_bot?text=${message}`, '_blank');
+            
+            // Показываем блок оплаты
             document.getElementById('form-content').style.display = 'none';
             document.getElementById('payment-methods').style.display = 'block';
         }
