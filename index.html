@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Новий Проект</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Основний стиль: Сучасний темний інтерфейс */
+        body { 
+            background-color: #0d1117; 
+            color: white; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            text-align: center; 
+            margin: 0; 
+            padding: 20px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container { width: 100%; max-width: 400px; }
+
+        h1 { color: #ffcc00; margin-bottom: 30px; font-size: 28px; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* Кнопки меню */
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
+        
+        .card { 
+            background: #161b22; 
+            border: 1px solid #30363d; 
+            padding: 20px; 
+            border-radius: 20px; 
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card:active { transform: scale(0.95); background: #1e252e; border-color: #ffcc00; }
+        
+        .icon { font-size: 30px; }
+        .card-title { font-weight: bold; font-size: 14px; }
+
+        /* Футер */
+        .footer { margin-top: 40px; color: #8b949e; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>РЕКЛАМА</h1>
+
+        <div class="grid-menu">
+            <a href="posluga1.html" class="card">
+                <span class="icon">🚀</span>
+                <span class="card-title">Просування</span>
+            </a>
+
+            <a href="posluga2.html" class="card">
+                <span class="icon">📊</span>
+                <span class="card-title">Аналітика</span>
+            </a>
+
+            <a href="posluga3.html" class="card">
+                <span class="icon">✍️</span>
+                <span class="card-title">Копірайт</span>
+            </a>
+
+            <a href="kontakty.html" class="card">
+                <span class="icon">📞</span>
+                <span class="card-title">Зв'язок</span>
+            </a>
+        </div>
+
+        <div class="footer">
+            © 2026 Рекламний Проект
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Розгорнути на весь екран
+        tg.MainButton.setText("ПОВЕРНУТИСЬ").hide();
+    </script>
+</body>
+</html>
