@@ -1,32 +1,25 @@
-
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Рекламна Платформа</title>
+    <title>Рекламная Платформа</title>
     <style>
         body { background-color: #0d1117; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        h1 { color: #ffcc00; text-transform: uppercase; margin: 40px 0; font-size: 28px; letter-spacing: 1px; }
-        
-        .order-box { background: #161b22; border: 1px solid #30363d; padding: 25px; border-radius: 25px; max-width: 340px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        
-        label { display: block; text-align: left; margin-left: 5px; margin-bottom: 5px; color: #8b949e; font-size: 14px; }
-        
-        select, input { 
-            width: 100%; padding: 14px; margin-bottom: 20px; border-radius: 15px; 
-            border: 1px solid #334155; background: #0d1117; color: white; font-size: 16px; box-sizing: border-box;
-        }
-
-        .price-display { font-size: 24px; color: #ffcc00; font-weight: bold; margin: 10px 0 25px 0; border-top: 1px solid #30363d; padding-top: 15px; }
-
-        .btn-order { 
-            background: #ffcc00; color: #0d1117; padding: 18px; width: 100%; 
-            border-radius: 18px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s;
-        }
-        .btn-order:active { transform: scale(0.97); background: #e6b800; }
-        
-        .footer { margin-top: 40px; color: #8b949e; font-size: 12px; }
+        h1 { color: #ffcc00; text-transform: uppercase; margin: 30px 0; font-size: 26px; }
+        .order-box { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 25px; max-width: 380px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        label { display: block; text-align: left; margin: 10px 0 5px 10px; color: #8b949e; font-size: 13px; }
+        select, input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 15px; border: 1px solid #334155; background: #0d1117; color: white; font-size: 16px; box-sizing: border-box; outline: none; }
+        .price-display { font-size: 24px; color: #ffcc00; font-weight: bold; margin: 15px 0; padding-top: 10px; border-top: 1px solid #334155; }
+        .btn-order { background: #ffcc00; color: #0d1117; padding: 18px; width: 100%; border-radius: 18px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        #payment-methods { display: none; margin-top: 25px; text-align: left; animation: fadeIn 0.4s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .pay-card { background: #1f2937; border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #374151; }
+        .pay-title { font-size: 14px; color: #9ca3af; margin-bottom: 10px; font-weight: bold; }
+        .bank-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 10px; }
+        .bank-btn { background: #2d3748; border-radius: 12px; padding: 12px; text-align: center; font-size: 13px; color: white; text-decoration: none; border: 1px solid #4a5568; transition: 0.2s; display: block; }
+        .bank-btn:active { background: #4a5568; }
+        .crypto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     </style>
 </head>
 <body>
@@ -34,44 +27,67 @@
     <h1>РЕКЛАМА</h1>
 
     <div class="order-box">
-        <label>Оберіть канал:</label>
-        <select id="channel" onchange="updatePrice()">
-            <option value="100">Канал №1 (2000 підп.) — 100₴</option>
-            <option value="100">Канал №2 (2000 підп.) — 100₴</option>
-            <option value="100">Канал №3 (2000 підп.) — 100₴</option>
-            <option value="250">УСІ ТРИ КАНАЛИ (ПАКЕТ) — 250₴</option>
-        </select>
+        <div id="form-content">
+            <label>Выберите канал:</label>
+            <select id="channel" onchange="updatePrice()">
+                <option value="0.02">Лотерея на удачу — 0.02 USDT</option>
+                <option value="0.02">Токен в кармане — 0.02 USDT</option>
+                <option value="0.02">Интервью Софийки — 0.02 USDT</option>
+                <option value="0.05">ПАКЕТ: Все 3 канала — 0.05 USDT</option>
+            </select>
 
-        <label>Кількість днів показу:</label>
-        <input type="number" id="days" value="1" min="1" oninput="updatePrice()">
+            <label>Дней показа (3 поста/сут):</label>
+            <input type="number" id="days" value="1" min="1" oninput="updatePrice()">
 
-        <div class="price-display">До сплати: <span id="total">100</span> ₴</div>
+            <div class="price-display">К оплате: <span id="total">0.02</span> USDT</div>
+            <p style="font-size: 14px; color: #8b949e; margin-bottom: 20px;">(~ <span id="total-uah">1</span> грн)</p>
 
-        <button class="btn-order" onclick="sendToBot()">ОФОРМИТИ ЗАМОВЛЕННЯ</button>
+            <button class="btn-order" onclick="processOrder()">ОФОРМИТЬ ЗАКАЗ</button>
+        </div>
+
+        <div id="payment-methods">
+            <h3 style="color: #ffcc00; text-align: center; margin-top: 0; font-size: 18px;">Оплата заказа:</h3>
+            
+            <div class="pay-card">
+                <div class="pay-title">💳 Банковские карты (UAH)</div>
+                <div class="bank-grid">
+                    <a href="https://send.monobank.ua/jar/ALGbQ8CaYU" target="_blank" class="bank-btn" style="border-left: 4px solid #ff4b4b;">Monobank (Банка)</a>
+                    <a href="https://www.privat24.ua/send/i0qz3" target="_blank" class="bank-btn" style="border-left: 4px solid #7ed321;">Приват24</a>
+                    <a href="https://pay.obank.com.ua/payment?type=skrynka&uuid=4B45E725-F5D1-4BF6-9CDD-2E81C98074C7" target="_blank" class="bank-btn" style="border-left: 4px solid #ffcc00;">Идея Банк</a>
+                </div>
+            </div>
+
+            <div class="pay-card">
+                <div class="pay-title">🚀 Крипто-боты (USDT)</div>
+                <div class="crypto-grid">
+                    <a href="https://t.me/xrocket?start=inv_4GEr2pZVc5eeBhf" target="_blank" class="bank-btn">XRocket</a>
+                    <a href="http://t.me/send?start=IV8OFNV4FVSF" target="_blank" class="bank-btn">CryptoBot</a>
+                    <a href="https://t.me/iCryptoCheckBot?start=INV470216316" target="_blank" class="bank-btn" style="grid-column: span 2;">iCrypto Check</a>
+                </div>
+            </div>
+            
+            <button class="btn-order" style="background: #374151; color: white;" onclick="location.reload()">Назад</button>
+        </div>
     </div>
 
-    <div class="footer">© 2026 @tokenpist_bot Business System</div>
-
     <script>
+        const exchangeRate = 40;
         function updatePrice() {
-            const price = document.getElementById('channel').value;
-            const days = document.getElementById('days').value;
-            document.getElementById('total').innerText = price * days;
+            const price = parseFloat(document.getElementById('channel').value);
+            const days = parseInt(document.getElementById('days').value) || 0;
+            const total = (price * days).toFixed(2);
+            document.getElementById('total').innerText = total;
+            document.getElementById('total-uah').innerText = Math.round(total * exchangeRate);
         }
-
-        function sendToBot() {
+        function processOrder() {
             const channelName = document.getElementById('channel').selectedOptions[0].text;
             const days = document.getElementById('days').value;
             const total = document.getElementById('total').innerText;
-            
-            // Назва вашого бота зворотного зв'язку
-            const botUsername = "tokenpist_bot"; 
-            
-            // Створюємо текст повідомлення для бота
-            const message = `НОВЕ ЗАМОВЛЕННЯ РЕКЛАМИ:%0A--------------------------%0A📍 Канал: ${channelName}%0A📅 Термін: ${days} дн.%0A💰 Сума: ${total} грн.%0A--------------------------%0AНадішліть це повідомлення боту, щоб отримати реквізити.`;
-            
-            // Відкриває бота з готовим текстом (start=message не спрацює для всіх ботів, тому використовуємо пряме посилання з текстом)
-            window.location.href = `https://t.me/${botUsername}?text=${message}`;
+            const totalUah = document.getElementById('total-uah').innerText;
+            const message = `ЗАКАЗ РЕКЛАМЫ:%0A📍 ${channelName}%0A📅 Срок: ${days} дн.%0A💰 Сумма: ${total} USDT (${totalUah} грн)`;
+            window.open(`https://t.me/tokenpist_bot?text=${message}`, '_blank');
+            document.getElementById('form-content').style.display = 'none';
+            document.getElementById('payment-methods').style.display = 'block';
         }
     </script>
 </body>
