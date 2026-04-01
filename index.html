@@ -1,91 +1,78 @@
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Новий Проект</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Рекламна Платформа</title>
     <style>
-        /* Основний стиль: Сучасний темний інтерфейс */
-        body { 
-            background-color: #0d1117; 
-            color: white; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            text-align: center; 
-            margin: 0; 
-            padding: 20px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        body { background-color: #0d1117; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
+        h1 { color: #ffcc00; text-transform: uppercase; margin: 40px 0; font-size: 28px; letter-spacing: 1px; }
+        
+        .order-box { background: #161b22; border: 1px solid #30363d; padding: 25px; border-radius: 25px; max-width: 340px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        
+        label { display: block; text-align: left; margin-left: 5px; margin-bottom: 5px; color: #8b949e; font-size: 14px; }
+        
+        select, input { 
+            width: 100%; padding: 14px; margin-bottom: 20px; border-radius: 15px; 
+            border: 1px solid #334155; background: #0d1117; color: white; font-size: 16px; box-sizing: border-box;
         }
 
-        .container { width: 100%; max-width: 400px; }
+        .price-display { font-size: 24px; color: #ffcc00; font-weight: bold; margin: 10px 0 25px 0; border-top: 1px solid #30363d; padding-top: 15px; }
 
-        h1 { color: #ffcc00; margin-bottom: 30px; font-size: 28px; text-transform: uppercase; letter-spacing: 2px; }
-
-        /* Кнопки меню */
-        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; }
-        
-        .card { 
-            background: #161b22; 
-            border: 1px solid #30363d; 
-            padding: 20px; 
-            border-radius: 20px; 
-            cursor: pointer;
-            transition: 0.3s;
-            text-decoration: none;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
+        .btn-order { 
+            background: #ffcc00; color: #0d1117; padding: 18px; width: 100%; 
+            border-radius: 18px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s;
         }
-
-        .card:active { transform: scale(0.95); background: #1e252e; border-color: #ffcc00; }
+        .btn-order:active { transform: scale(0.97); background: #e6b800; }
         
-        .icon { font-size: 30px; }
-        .card-title { font-weight: bold; font-size: 14px; }
-
-        /* Футер */
         .footer { margin-top: 40px; color: #8b949e; font-size: 12px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>РЕКЛАМА</h1>
+    <h1>РЕКЛАМА</h1>
 
-        <div class="grid-menu">
-            <a href="posluga1.html" class="card">
-                <span class="icon">🚀</span>
-                <span class="card-title">Просування</span>
-            </a>
+    <div class="order-box">
+        <label>Оберіть канал:</label>
+        <select id="channel" onchange="updatePrice()">
+            <option value="100">Канал №1 (2000 підп.) — 100₴</option>
+            <option value="100">Канал №2 (2000 підп.) — 100₴</option>
+            <option value="100">Канал №3 (2000 підп.) — 100₴</option>
+            <option value="250">УСІ ТРИ КАНАЛИ (ПАКЕТ) — 250₴</option>
+        </select>
 
-            <a href="posluga2.html" class="card">
-                <span class="icon">📊</span>
-                <span class="card-title">Аналітика</span>
-            </a>
+        <label>Кількість днів показу:</label>
+        <input type="number" id="days" value="1" min="1" oninput="updatePrice()">
 
-            <a href="posluga3.html" class="card">
-                <span class="icon">✍️</span>
-                <span class="card-title">Копірайт</span>
-            </a>
+        <div class="price-display">До сплати: <span id="total">100</span> ₴</div>
 
-            <a href="kontakty.html" class="card">
-                <span class="icon">📞</span>
-                <span class="card-title">Зв'язок</span>
-            </a>
-        </div>
-
-        <div class="footer">
-            © 2026 Рекламний Проект
-        </div>
+        <button class="btn-order" onclick="sendToBot()">ОФОРМИТИ ЗАМОВЛЕННЯ</button>
     </div>
 
+    <div class="footer">© 2026 @tokenpist_bot Business System</div>
+
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand(); // Розгорнути на весь екран
-        tg.MainButton.setText("ПОВЕРНУТИСЬ").hide();
+        function updatePrice() {
+            const price = document.getElementById('channel').value;
+            const days = document.getElementById('days').value;
+            document.getElementById('total').innerText = price * days;
+        }
+
+        function sendToBot() {
+            const channelName = document.getElementById('channel').selectedOptions[0].text;
+            const days = document.getElementById('days').value;
+            const total = document.getElementById('total').innerText;
+            
+            // Назва вашого бота зворотного зв'язку
+            const botUsername = "tokenpist_bot"; 
+            
+            // Створюємо текст повідомлення для бота
+            const message = `НОВЕ ЗАМОВЛЕННЯ РЕКЛАМИ:%0A--------------------------%0A📍 Канал: ${channelName}%0A📅 Термін: ${days} дн.%0A💰 Сума: ${total} грн.%0A--------------------------%0AНадішліть це повідомлення боту, щоб отримати реквізити.`;
+            
+            // Відкриває бота з готовим текстом (start=message не спрацює для всіх ботів, тому використовуємо пряме посилання з текстом)
+            window.location.href = `https://t.me/${botUsername}?text=${message}`;
+        }
     </script>
 </body>
 </html>
