@@ -3,76 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Рекламна Платформа</title>
+    <title>Оплата замовлення</title>
     <style>
         body { background-color: #0d1117; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        h1 { color: #ffcc00; text-transform: uppercase; margin: 30px 0; font-size: 26px; }
-        .order-box { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 25px; max-width: 380px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        label { display: block; text-align: left; margin: 10px 0 5px 10px; color: #8b949e; font-size: 13px; }
-        select, input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 15px; border: 1px solid #334155; background: #0d1117; color: white; font-size: 16px; box-sizing: border-box; outline: none; }
-        .price-display { font-size: 24px; color: #ffcc00; font-weight: bold; margin: 15px 0; padding-top: 10px; border-top: 1px solid #334155; }
-        .currency-info { font-size: 14px; color: #8b949e; margin-bottom: 20px; line-height: 1.6; }
+        h1 { color: #ffcc00; text-transform: uppercase; margin: 20px 0; font-size: 24px; }
+        .order-box { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 25px; max-width: 380px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.4); text-align: left; }
+        h2 { color: #ffcc00; text-align: center; margin-top: 0; font-size: 18px; }
         
-        /* Жовта кнопка замовлення */
-        .btn-order { background: #ffcc00; color: #0d1117; padding: 18px; width: 100%; border-radius: 18px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; text-decoration: none; display: block; margin-bottom: 12px; }
+        .pay-card { background: #1f2937; border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #374151; }
+        .pay-title { font-size: 14px; color: #9ca3af; margin-bottom: 10px; font-weight: bold; }
         
-        /* Зелена кнопка оплати */
-        .btn-pay-now { background: #238636; color: white; padding: 16px; width: 100%; border-radius: 18px; border: none; font-weight: bold; font-size: 15px; cursor: pointer; text-decoration: none; display: block; box-shadow: 0 0 15px rgba(35, 134, 54, 0.3); box-sizing: border-box; }
+        .bank-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .bank-btn { background: #2d3748; border-radius: 12px; padding: 12px; text-align: center; font-size: 13px; color: white; text-decoration: none; border: 1px solid #4a5568; display: block; font-weight: bold; transition: 0.2s; }
+        .bank-btn:active { background: #3d495d; }
         
-        .divider { color: #8b949e; font-size: 12px; margin: 15px 0; display: flex; align-items: center; justify-content: center; }
-        .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: #30363d; margin: 0 10px; }
-        .instruction { font-size: 11px; color: #8b949e; margin-top: 15px; border: 1px dashed #30363d; padding: 10px; border-radius: 10px; }
+        .crypto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        
+        /* Кнопка Повернутись */
+        .btn-back { background: #30363d; color: #8b949e; padding: 15px; width: 100%; border-radius: 18px; border: 1px solid #444; font-weight: bold; margin-top: 15px; text-decoration: none; display: block; text-align: center; box-sizing: border-box; }
+        
+        .instruction { font-size: 12px; color: #8b949e; text-align: center; margin-top: 15px; line-height: 1.4; }
     </style>
 </head>
 <body>
-    <h1>РЕКЛАМА</h1>
+    <h1>ОПЛАТА</h1>
+    
     <div class="order-box">
-        <label>Оберіть канал:</label>
-        <select id="channel" onchange="updatePrice()">
-            <option value="0.02">Лотерея на удачу — 0.02 USDT</option>
-            <option value="0.02">Токен в кармане — 0.02 USDT</option>
-            <option value="0.02">Интервью Софийки — 0.02 USDT</option>
-            <option value="0.05">ПАКЕТ: Все 3 канала — 0.05 USDT</option>
-        </select>
+        <h2>Оберіть спосіб:</h2>
         
-        <label>Днів показу:</label>
-        <input type="number" id="days" value="1" min="1" oninput="updatePrice()">
-        
-        <div class="price-display">До сплати: <span id="total">0.02</span> USDT</div>
-        <div class="currency-info">
-            (~ <span id="total-uah">1</span> грн) <br>
-            (~ <span id="total-rub">2</span> руб)
+        <div class="pay-card">
+            <div class="pay-title">💳 Банківські картки (UAH)</div>
+            <div class="bank-grid">
+                <a href="https://send.monobank.ua/jar/ALGbQ8CaYU" target="_blank" class="bank-btn" style="border-left: 4px solid #ff4b4b;">Monobank (Банка)</a>
+                <a href="https://www.privat24.ua/send/i0qz3" target="_blank" class="bank-btn" style="border-left: 4px solid #7ed321;">Приват24</a>
+                <a href="https://pay.obank.com.ua/payment?type=skrynka&uuid=4B45E725-F5D1-4BF6-9CDD-2E81C98074C7" target="_blank" class="bank-btn" style="border-left: 4px solid #ffcc00;">Ідея Банк</a>
+            </div>
         </div>
 
-        <button class="btn-order" onclick="goToOrder()">ОФОРМИТЬ ЗАКАЗ</button>
+        <div class="pay-card">
+            <div class="pay-title">🚀 Крипто-боти (USDT)</div>
+            <div class="crypto-grid">
+                <a href="https://t.me/xrocket?start=inv_4GEr2pZVc5eeBhf" target="_blank" class="bank-btn">XRocket</a>
+                <a href="http://t.me/send?start=IV8OFNV4FVSF" target="_blank" class="bank-btn">CryptoBot</a>
+                <a href="https://t.me/iCryptoCheckBot?start=INV470216316" target="_blank" class="bank-btn" style="grid-column: span 2;">iCrypto Check</a>
+            </div>
+        </div>
 
-        <div class="divider">АБО</div>
-
-        <a href="pay.html" class="btn-pay-now">💳 ОПЛАТИТИ ЗАМОВЛЕННЯ</a>
-        
         <div class="instruction">
-            ⚠️ Після натискання «Оформити» вас перекине в Telegram. <br>
-            Поверніться сюди та натисніть «Оплатити», щоб побачити реквізити.
+            Після оплати обов'язково надішліть скріншот у бот <b>@tokenpist_bot</b>
         </div>
+
+        <a href="index.html" class="btn-back">⬅️ ПОВЕРНУТИСЬ НА ГОЛОВНУ</a>
     </div>
-
-    <script>
-        function updatePrice() {
-            const total = (document.getElementById('channel').value * document.getElementById('days').value).toFixed(2);
-            document.getElementById('total').innerText = total;
-            document.getElementById('total-uah').innerText = Math.round(total * 40);
-            document.getElementById('total-rub').innerText = Math.round(total * 95);
-        }
-
-        function goToOrder() {
-            const channel = document.getElementById('channel').selectedOptions[0].text;
-            const days = document.getElementById('days').value;
-            const total = document.getElementById('total').innerText;
-            const msg = `ЗАКАЗ РЕКЛАМЫ:%0A📍 ${channel}%0A📅 Срок: ${days} дн.%0A💰 Сумма: ${total} USDT`;
-            
-            window.open(`https://t.me/tokenpist_bot?text=${msg}`, '_blank');
-            window.location.href = "pay.html";
-        }
-    </script>
 </body>
 </html>
