@@ -147,14 +147,14 @@
         
         <div class="price-display"><span id="total">1.00</span> USDT</div>
         <div class="currency-info">
-            ≈ <span id="total-uah">40</span> грн | ≈ <span id="total-rub">95</span> руб
+            ≈ <span id="total-ton">0.20</span> TON | ≈ <span id="total-uah">40</span> грн
         </div>
 
         <button class="btn-order" onclick="goToOrder()">ОФОРМИТЬ ЗАКАЗ</button>
 
         <div class="divider">ИЛИ</div>
 
-        <a href="pay.html" class="btn-pay-link">💳 ПЕРЕЙТИ К ОПЛАТЕ</a>
+        <a href="pay.html?price=0.20" id="direct-pay" class="btn-pay-link">💳 ПЕРЕЙТИ К ОПЛАТЕ</a>
         
         <div class="instruction">
             ⚠️ Детали заказа и ссылка на оплату будут продублированы ботом <b>@tokenpist_bot</b>.
@@ -162,35 +162,42 @@
     </div>
 
     <script>
+        // Курс USDT к TON (например, 1 USDT = 0.2 TON)
+        const TON_EXCHANGE_RATE = 0.2;
+
         function updatePrice() {
             const val = document.getElementById('channel').value;
             const days = document.getElementById('days').value || 1;
             const total = (val * days).toFixed(2);
+            const totalTon = (total * TON_EXCHANGE_RATE).toFixed(2);
             
             document.getElementById('total').innerText = total;
+            document.getElementById('total-ton').innerText = totalTon;
             document.getElementById('total-uah').innerText = Math.round(total * 40);
-            document.getElementById('total-rub').innerText = Math.round(total * 95);
+            
+            // Обновляем прямую ссылку на оплату
+            document.getElementById('direct-pay').href = `pay.html?price=${totalTon}`;
         }
 
         function goToOrder() {
             const select = document.getElementById('channel');
             const channelName = select.options[select.selectedIndex].text.split(' — ')[0];
             const days = document.getElementById('days').value;
-            const total = document.getElementById('total').innerText;
+            const totalUsdt = document.getElementById('total').innerText;
+            const totalTon = document.getElementById('total-ton').innerText;
             
-            // Текст для Telegram на русском
-            const msg = `ЗАКАЗ РЕКЛАМЫ%0A📍 Площадка: ${channelName}%0A📅 Срок: ${days} дн.%0A💰 Итого: ${total} USDT`;
+            // Текст для Telegram
+            const msg = `ЗАКАЗ РЕКЛАМЫ%0A📍 Площадка: ${channelName}%0A📅 Срок: ${days} дн.%0A💰 Итого: ${totalUsdt} USDT (${totalTon} TON)`;
             
             // Открываем бота
             window.open(`https://t.me/tokenpist_bot?text=${msg}`, '_blank');
             
-            // Переход на страницу оплаты
+            // Переход на страницу оплаты с передачей цены в TON
             setTimeout(() => {
-                window.location.href = "pay.html";
-            }, 600);
+                window.location.href = `pay.html?price=${totalTon}`;
+            }, 800);
         }
         
-        // Начальный расчет при загрузке
         updatePrice();
     </script>
 </body>
