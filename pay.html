@@ -10,7 +10,6 @@
         body { background-color: #0d1117; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
         h1 { color: #ffcc00; text-transform: uppercase; margin: 20px 0; font-size: 24px; }
         .order-box { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 25px; max-width: 380px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.4); text-align: left; }
-        h2 { color: #ffcc00; text-align: center; margin-top: 0; font-size: 18px; }
         .pay-card { background: #1f2937; border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #374151; }
         .pay-title { font-size: 14px; color: #9ca3af; margin-bottom: 10px; font-weight: bold; }
         .bank-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
@@ -54,7 +53,9 @@
     <script>
         const MY_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
         const params = new URLSearchParams(window.location.search);
-        const price = params.get('price') || "0.1";
+        
+        // Отримуємо ціну (наприклад 0.0040)
+        const price = params.get('price') || "0.1000";
         document.getElementById('price-display').innerText = "К оплате: " + price + " TON";
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -69,11 +70,15 @@
         });
 
         async function sendTonPayment() {
+            // Перетворюємо суму в нанотони (TON * 10^9)
+            // Використовуємо parseFloat для точності
+            const amountInNanotons = (Math.round(parseFloat(price) * 1000000000)).toString();
+
             const transaction = {
                 validUntil: Math.floor(Date.now() / 1000) + 300,
                 messages: [{
                     address: MY_WALLET,
-                    amount: (parseFloat(price) * 1000000000).toString()
+                    amount: amountInNanotons
                 }]
             };
             try {
