@@ -22,13 +22,7 @@
             margin: 0;
         }
 
-        h1 { 
-            color: var(--accent); 
-            text-transform: uppercase; 
-            margin-bottom: 30px; 
-            font-size: 26px;
-            letter-spacing: 1px;
-        }
+        h1 { color: var(--accent); text-transform: uppercase; margin-bottom: 30px; font-size: 26px; letter-spacing: 1px; }
 
         .order-box { 
             background: var(--card); 
@@ -40,92 +34,28 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.4); 
         }
 
-        label { 
-            display: block; 
-            text-align: left; 
-            margin: 15px 0 8px 10px; 
-            color: var(--text-secondary); 
-            font-size: 13px; 
-        }
+        label { display: block; text-align: left; margin: 15px 0 8px 10px; color: var(--text-secondary); font-size: 13px; }
 
         select, input { 
-            width: 100%; 
-            padding: 14px; 
-            border-radius: 12px; 
-            border: 1px solid #334155; 
-            background: var(--bg); 
-            color: white; 
-            font-size: 16px; 
-            box-sizing: border-box; 
-            outline: none;
-            transition: border-color 0.2s;
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #334155; 
+            background: var(--bg); color: white; font-size: 16px; box-sizing: border-box; outline: none;
         }
 
-        select:focus, input:focus {
-            border-color: var(--accent);
-        }
+        .price-display { font-size: 30px; color: var(--accent); font-weight: 700; margin: 20px 0 5px 0; padding-top: 15px; border-top: 1px solid var(--border); }
 
-        .price-display { 
-            font-size: 30px; 
-            color: var(--accent); 
-            font-weight: 700; 
-            margin: 20px 0 5px 0; 
-            padding-top: 15px; 
-            border-top: 1px solid var(--border); 
-        }
-
-        .currency-info { 
-            font-size: 14px; 
-            color: var(--text-secondary); 
-            margin-bottom: 25px; 
-        }
+        .currency-info { font-size: 14px; color: var(--text-secondary); margin-bottom: 25px; }
 
         .btn-order { 
-            background: var(--accent); 
-            color: #000; 
-            padding: 18px; 
-            width: 100%; 
-            border-radius: 15px; 
-            border: none; 
-            font-weight: bold; 
-            font-size: 16px; 
-            cursor: pointer; 
-            display: block;
-            margin-bottom: 15px;
-            transition: opacity 0.2s;
+            background: var(--accent); color: #000; padding: 18px; width: 100%; 
+            border-radius: 15px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; display: block; margin-bottom: 15px;
         }
 
-        .btn-order:active { opacity: 0.8; }
+        .btn-pay-link { color: #238636; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-block; }
 
-        .btn-pay-link { 
-            color: #238636; 
-            text-decoration: none; 
-            font-size: 14px; 
-            font-weight: 600;
-            display: inline-block;
-        }
+        .divider { color: var(--border); font-size: 12px; margin: 15px 0; display: flex; align-items: center; }
+        .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border); margin: 0 10px; }
 
-        .divider { 
-            color: var(--border); 
-            font-size: 12px; 
-            margin: 15px 0; 
-            display: flex; 
-            align-items: center; 
-        }
-
-        .divider::before, .divider::after { 
-            content: ""; flex: 1; height: 1px; background: var(--border); margin: 0 10px; 
-        }
-
-        .instruction { 
-            font-size: 11px; 
-            color: var(--text-secondary); 
-            margin-top: 20px; 
-            border: 1px dashed var(--border); 
-            padding: 10px; 
-            border-radius: 10px; 
-            line-height: 1.4;
-        }
+        .instruction { font-size: 11px; color: var(--text-secondary); margin-top: 20px; border: 1px dashed var(--border); padding: 10px; border-radius: 10px; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -147,14 +77,14 @@
         
         <div class="price-display"><span id="total">1.00</span> USDT</div>
         <div class="currency-info">
-            ≈ <span id="total-ton">0.20</span> TON | ≈ <span id="total-uah">40</span> грн
+            ≈ <span id="total-ton">0.2000</span> TON | ≈ <span id="total-uah">0.80</span> грн
         </div>
 
         <button class="btn-order" onclick="goToOrder()">ОФОРМИТЬ ЗАКАЗ</button>
 
         <div class="divider">ИЛИ</div>
 
-        <a href="pay.html?price=0.20" id="direct-pay" class="btn-pay-link">💳 ПЕРЕЙТИ К ОПЛАТЕ</a>
+        <a href="pay.html?price=0.2000" id="direct-pay" class="btn-pay-link">💳 ПЕРЕЙТИ К ОПЛАТЕ</a>
         
         <div class="instruction">
             ⚠️ Детали заказа и ссылка на оплату будут продублированы ботом <b>@tokenpist_bot</b>.
@@ -162,20 +92,23 @@
     </div>
 
     <script>
-        // Курс USDT к TON (например, 1 USDT = 0.2 TON)
-        const TON_EXCHANGE_RATE = 0.2;
+        // Курс 1 USDT = 0.2 TON
+        const TON_RATE = 0.2; 
 
         function updatePrice() {
             const val = document.getElementById('channel').value;
             const days = document.getElementById('days').value || 1;
-            const total = (val * days).toFixed(2);
-            const totalTon = (total * TON_EXCHANGE_RATE).toFixed(2);
+            const totalUsdt = (val * days).toFixed(2);
             
-            document.getElementById('total').innerText = total;
+            // Расчет TON с точностью до 4 знаков
+            let totalTon = (totalUsdt * TON_RATE).toFixed(4);
+            
+            document.getElementById('total').innerText = totalUsdt;
             document.getElementById('total-ton').innerText = totalTon;
-            document.getElementById('total-uah').innerText = Math.round(total * 40);
+            // Расчет гривны (курс 40)
+            document.getElementById('total-uah').innerText = (totalUsdt * 40).toFixed(2);
             
-            // Обновляем прямую ссылку на оплату
+            // Обновляем ссылку для страницы оплаты
             document.getElementById('direct-pay').href = `pay.html?price=${totalTon}`;
         }
 
@@ -186,13 +119,10 @@
             const totalUsdt = document.getElementById('total').innerText;
             const totalTon = document.getElementById('total-ton').innerText;
             
-            // Текст для Telegram
             const msg = `ЗАКАЗ РЕКЛАМЫ%0A📍 Площадка: ${channelName}%0A📅 Срок: ${days} дн.%0A💰 Итого: ${totalUsdt} USDT (${totalTon} TON)`;
             
-            // Открываем бота
             window.open(`https://t.me/tokenpist_bot?text=${msg}`, '_blank');
             
-            // Переход на страницу оплаты с передачей цены в TON
             setTimeout(() => {
                 window.location.href = `pay.html?price=${totalTon}`;
             }, 800);
