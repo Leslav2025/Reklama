@@ -1,59 +1,86 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Оплата замовлення</title>
+    <title>Оплата заказа</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         body { background-color: #0d1117; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
         h1 { color: #ffcc00; text-transform: uppercase; margin: 20px 0; font-size: 24px; }
         .order-box { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 25px; max-width: 380px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.4); text-align: left; }
         h2 { color: #ffcc00; text-align: center; margin-top: 0; font-size: 18px; }
-        
         .pay-card { background: #1f2937; border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #374151; }
         .pay-title { font-size: 14px; color: #9ca3af; margin-bottom: 10px; font-weight: bold; }
-        
         .bank-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
-        .bank-btn { background: #2d3748; border-radius: 12px; padding: 12px; text-align: center; font-size: 13px; color: white; text-decoration: none; border: 1px solid #4a5568; display: block; font-weight: bold; transition: 0.2s; }
-        .bank-btn:active { background: #3d495d; }
-        
+        .bank-btn { background: #2d3748; border-radius: 12px; padding: 12px; text-align: center; font-size: 13px; color: white; text-decoration: none; border: 1px solid #4a5568; display: block; font-weight: bold; transition: 0.2s; cursor: pointer; }
         .crypto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        
-        /* Кнопка Повернутись */
+        #ton-connect-button { display: flex; justify-content: center; margin-bottom: 10px; }
+        .btn-ton-pay { background: #007aff; border: none; width: 100%; padding: 12px; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; font-size: 14px; }
+        .btn-ton-pay:disabled { background: #4b5563; opacity: 0.6; }
         .btn-back { background: #30363d; color: #8b949e; padding: 15px; width: 100%; border-radius: 18px; border: 1px solid #444; font-weight: bold; margin-top: 15px; text-decoration: none; display: block; text-align: center; box-sizing: border-box; }
-        
         .instruction { font-size: 12px; color: #8b949e; text-align: center; margin-top: 15px; line-height: 1.4; }
+        .price-info { text-align: center; font-weight: bold; color: #ffcc00; margin-bottom: 15px; font-size: 18px; }
     </style>
 </head>
 <body>
     <h1>ОПЛАТА</h1>
-    
     <div class="order-box">
-        <h2>Оберіть спосіб:</h2>
-        
+        <div id="price-display" class="price-info">К оплате: ...</div>
         <div class="pay-card">
-            <div class="pay-title">💳 Банківські картки (UAH)</div>
+            <div class="pay-title">💎 Telegram Wallet / TON Connect</div>
+            <div id="ton-connect-button"></div>
+            <button id="main-pay-btn" class="btn-ton-pay" onclick="sendTonPayment()" disabled>ПОДКЛЮЧИТЕ КОШЕЛЕК</button>
+        </div>
+        <div class="pay-card">
+            <div class="pay-title">💳 Банковские карты (UAH)</div>
             <div class="bank-grid">
                 <a href="https://send.monobank.ua/jar/ALGbQ8CaYU" target="_blank" class="bank-btn" style="border-left: 4px solid #ff4b4b;">Monobank (Банка)</a>
                 <a href="https://www.privat24.ua/send/i0qz3" target="_blank" class="bank-btn" style="border-left: 4px solid #7ed321;">Приват24</a>
-                <a href="https://pay.obank.com.ua/payment?type=skrynka&uuid=4B45E725-F5D1-4BF6-9CDD-2E81C98074C7" target="_blank" class="bank-btn" style="border-left: 4px solid #ffcc00;">Ідея Банк</a>
             </div>
         </div>
-
         <div class="pay-card">
-            <div class="pay-title">🚀 Крипто-боти (USDT)</div>
+            <div class="pay-title">🚀 Крипто-боты (USDT)</div>
             <div class="crypto-grid">
                 <a href="https://t.me/xrocket?start=inv_4GEr2pZVc5eeBhf" target="_blank" class="bank-btn">XRocket</a>
                 <a href="http://t.me/send?start=IV8OFNV4FVSF" target="_blank" class="bank-btn">CryptoBot</a>
-                <a href="https://t.me/iCryptoCheckBot?start=INV470216316" target="_blank" class="bank-btn" style="grid-column: span 2;">iCrypto Check</a>
             </div>
         </div>
-
-        <div class="instruction">
-            Після оплати обов'язково надішліть скріншот у бот <b>@tokenpist_bot</b>
-        </div>
-
-        <a href="index.html" class="btn-back">⬅️ ПОВЕРНУТИСЬ НА ГОЛОВНУ</a>
+        <div class="instruction">После оплаты обязательно отправьте скриншот в бот <b>@tokenpist_bot</b></div>
+        <a href="index.html" class="btn-back">⬅️ ВЕРНУТЬСЯ</a>
     </div>
+
+    <script>
+        const MY_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
+        const params = new URLSearchParams(window.location.search);
+        const price = params.get('price') || "0.1";
+        document.getElementById('price-display').innerText = "К оплате: " + price + " TON";
+
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://leslav2025.github.io/Reklama/tonconnect-manifest.json',
+            buttonRootId: 'ton-connect-button'
+        });
+
+        tonConnectUI.onStatusChange(wallet => {
+            const btn = document.getElementById('main-pay-btn');
+            btn.disabled = !wallet;
+            btn.innerText = wallet ? "ПОДТВЕРДИТЬ ОПЛАТУ" : "ПОДКЛЮЧИТЕ КОШЕЛЕК";
+        });
+
+        async function sendTonPayment() {
+            const transaction = {
+                validUntil: Math.floor(Date.now() / 1000) + 300,
+                messages: [{
+                    address: MY_WALLET,
+                    amount: (parseFloat(price) * 1000000000).toString()
+                }]
+            };
+            try {
+                const result = await tonConnectUI.sendTransaction(transaction);
+                if (result) { alert("Успешно! Отправьте скриншот в бот."); }
+            } catch (e) { alert("Ошибка или отмена."); }
+        }
+    </script>
 </body>
 </html>
